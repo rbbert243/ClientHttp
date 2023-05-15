@@ -10,6 +10,7 @@ int main()
 {
     std::string command;
     auto client = make_unique<ClientLib::Client>(SERVER_IP, SERVER_PORT);
+    client->connect();
     while (std::cin >> command)
     {
         if (command == "exit")

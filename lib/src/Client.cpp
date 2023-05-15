@@ -9,7 +9,6 @@ namespace ClientLib
 {
     Client::Client(const std::string &ip, uint16_t port)
     {
-        std::cout << "Connecting to " << ip << ":" << port << std::endl;
         int rc;
         sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         assert(sock_fd != -1);
@@ -19,10 +18,16 @@ namespace ClientLib
 
         rc = inet_pton(AF_INET, ip.c_str(), &server_addr.sin_addr);
         assert(rc != -1);
-
-        std::cout << "Connected" << std::endl;
     }
 
     Client::~Client() = default;
+
+    void Client::connect()
+    {
+        int rc;
+        rc = ::connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        assert(rc != -1);
+        is_connected = true;
+    }
 
 } // namespace ClientLib
