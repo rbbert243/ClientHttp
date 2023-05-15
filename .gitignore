@@ -43,3 +43,9 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# Build directory
+build/
+
+# Visual Studio
+.vscode/
