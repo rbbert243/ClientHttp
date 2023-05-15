@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include_directories(lib/include)
 
 add_library(ClientLib STATIC
-    lib/src/test.cpp)
+    lib/src/Client.cpp)
 
 add_executable(Client main.cpp)
 
