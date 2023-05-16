@@ -2,6 +2,7 @@
 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #include <cassert>
 #include <iostream>
 
@@ -22,14 +23,19 @@ namespace ClientLib
 
     void Client::establish_connection()
     {
-        assert(!is_connected);
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
-        is_connected = true;
+    }
+
+    void Client::reconnect()
+    {
+        close(sock_fd);
+        sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+        assert(sock_fd != -1);
+        assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
     }
 
     void Client::send_request(const std::string &request)
     {
-        assert(is_connected);
         size_t bytes_sent = 0;
         while (bytes_sent < request.length())
         {
@@ -41,7 +47,6 @@ namespace ClientLib
 
     Response Client::receive_response()
     {
-        assert(is_connected);
         std::string response;
         char buffer[4096];
         ssize_t bytes_received;
