@@ -18,8 +18,8 @@ namespace ClientLib
         ~Client();
         void establish_connection();
         void reconnect();
-        void send_request(const std::string &request);
-        Response receive_response();
+        void send_request(const std::string &request) const;
+        Response receive_response() const;
     };
 
 } // namespace ClientLib

@@ -17,10 +17,9 @@ namespace ClientLib
         if (method == "POST")
         {
             request += "Content-Type: application/json" CRLF;
-            request += "Content-Length: " + std::to_string(payload.dump(2).length() + 1) + CRLF;
+            request += "Content-Length: " + std::to_string(payload.dump().length()) + CRLF;
             request += CRLF;
             request += payload.dump();
-            request += CRLF;
         }
         else
         {
