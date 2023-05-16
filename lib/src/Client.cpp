@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cassert>
 #include <iostream>
+#include <array>
 
 namespace ClientLib
 {
@@ -34,7 +35,7 @@ namespace ClientLib
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
     }
 
-    void Client::send_request(const std::string &request)
+    void Client::send_request(const std::string &request) const
     {
         size_t bytes_sent = 0;
         while (bytes_sent < request.length())
@@ -45,18 +46,17 @@ namespace ClientLib
         }
     }
 
-    Response Client::receive_response()
+    Response Client::receive_response() const
     {
         std::string response;
-        char buffer[4096];
+        std::array<char, 4096> buffer;
         ssize_t bytes_received;
         do
         {
-            bytes_received = recv(sock_fd, buffer, sizeof(buffer), 0);
+            bytes_received = recv(sock_fd, buffer.data(), buffer.size(), 0);
             assert(bytes_received != -1);
-            response.append(buffer, bytes_received);
-        } while (bytes_received == sizeof(buffer));
-        std::cout << response << std::endl;
+            response.append(buffer.data(), bytes_received);
+        } while (bytes_received == static_cast<ssize_t>(buffer.size()));
         return Response(response);
     }
 

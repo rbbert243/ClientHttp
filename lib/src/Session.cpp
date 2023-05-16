@@ -55,6 +55,23 @@ namespace ClientLib
     {
         client.get()->send_request(request);
         auto response = client.get()->receive_response();
+        if (response.get_status_code() >= 200 && response.get_status_code() < 300)
+        {
+            std::cout << "Success" << std::endl;
+        }
+        else if (response.get_status_code() >= 400 && response.get_status_code() < 500)
+        {
+            json response_body = json::parse(response.get_body());
+            std::cout << response_body["error"] << std::endl;
+        }
+        else if (response.get_status_code() >= 500 && response.get_status_code() < 600)
+        {
+            std::cout << "Server error" << std::endl;
+        }
+        else
+        {
+            std::cout << "Unknown error" << std::endl;
+        }
     }
 
 } // namespace ClientLib
