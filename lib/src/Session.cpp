@@ -12,17 +12,14 @@ namespace ClientLib
     Session::Session(std::unique_ptr<Client> client) : client(std::move(client))
     {
         this->client->establish_connection();
+        this->client.get()->start_keep_alive();
     }
 
     Session::~Session() = default;
 
-    void Session::parse_command(const std::string &command)
+    void Session::parse_command(const std::string &command) const
     {
-        if (command == "help")
-        {
-            std::cout << "Available commands are register, exit" << std::endl;
-        }
-        else if (command == "register")
+        if (command == "register")
         {
             std::string username;
             std::string password;
@@ -49,9 +46,36 @@ namespace ClientLib
             auto request = Request("POST", "/api/v1/tema/auth/register", payload);
             send_request(request.to_string());
         }
+        else if (command == "login")
+        {
+            std::string username;
+            std::string password;
+            std::cout << "username=";
+            getline(std::cin, username);
+            if (username.find(' ') != std::string::npos)
+            {
+                std::cout << "Username cannot contain spaces" << std::endl;
+                return;
+            }
+            std::cout << "password=";
+            getline(std::cin, password);
+            if (password.find(' ') != std::string::npos)
+            {
+                std::cout << "Password cannot contain spaces" << std::endl;
+                return;
+            }
+
+            json payload = {
+                {"username", username},
+                {"password", password},
+            };
+
+            auto request = Request("POST", "/api/v1/tema/auth/login", payload);
+            send_request(request.to_string());
+        }
     }
 
-    void Session::send_request(const std::string &request)
+    void Session::send_request(const std::string &request) const
     {
         client.get()->send_request(request);
         auto response = client.get()->receive_response();
@@ -70,7 +94,7 @@ namespace ClientLib
         }
         else
         {
-            std::cout << "Unknown error" << std::endl;
+            std::cout << "Connection is closed" << std::endl;
         }
     }
 

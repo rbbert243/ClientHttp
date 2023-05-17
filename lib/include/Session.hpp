@@ -15,8 +15,8 @@ namespace ClientLib
         friend class Client;
         explicit Session(std::unique_ptr<Client> client);
         ~Session();
-        void parse_command(const std::string &command);
-        void send_request(const std::string &request);
+        void parse_command(const std::string &command) const;
+        void send_request(const std::string &request) const;
 
         static std::unique_ptr<Session> create(std::unique_ptr<Client> client)
         {

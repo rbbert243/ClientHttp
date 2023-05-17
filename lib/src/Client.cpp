@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <array>
+#include <poll.h>
 
 namespace ClientLib
 {
@@ -20,7 +21,10 @@ namespace ClientLib
         assert(inet_pton(AF_INET, ip.c_str(), &server_addr.sin_addr) != -1);
     }
 
-    Client::~Client() = default;
+    Client::~Client()
+    {
+        terminate();
+    }
 
     void Client::establish_connection()
     {
@@ -58,6 +62,45 @@ namespace ClientLib
             response.append(buffer.data(), bytes_received);
         } while (bytes_received == static_cast<ssize_t>(buffer.size()));
         return Response(response);
+    }
+
+    void Client::start_keep_alive()
+    {
+        keep_alive_thread = std::thread(&Client::keep_alive, this);
+    }
+
+    void Client::keep_alive()
+    {
+        while (true)
+        {
+            std::unique_lock<std::mutex> lock(keep_alive_mutex);
+            if (keep_alive_cv.wait_for(lock, std::chrono::seconds(1), [this]()
+                                       { return stop_keep_alive; }))
+            {
+                break;
+            }
+
+            struct pollfd poll_fd;
+            poll_fd.fd = sock_fd;
+            poll_fd.events = POLLHUP | POLLERR;
+
+            int ret = poll(&poll_fd, 1, 0);
+            assert(ret != -1);
+            if (ret > 0 && (poll_fd.revents & (POLLHUP | POLLERR)))
+            {
+                std::cout << "Connection lost" << std::endl;
+                reconnect();
+            }
+        }
+    }
+
+    void Client::terminate()
+    {
+        stop_keep_alive = true;
+        if (keep_alive_thread.joinable())
+        {
+            keep_alive_thread.join();
+        }
     }
 
 } // namespace ClientLib
