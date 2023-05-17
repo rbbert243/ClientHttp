@@ -26,7 +26,6 @@ namespace ClientLib
     void Client::establish_connection()
     {
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
-        is_connected = true;
     }
 
     void Client::reconnect()
@@ -35,16 +34,10 @@ namespace ClientLib
         sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         assert(sock_fd != -1);
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
-        is_connected = true;
     }
 
     void Client::send_request(const std::string &request)
     {
-        check_connection();
-        if (!is_connected)
-        {
-            reconnect();
-        }
         size_t bytes_sent = 0;
         while (bytes_sent < request.length())
         {
@@ -56,35 +49,25 @@ namespace ClientLib
 
     Response Client::receive_response()
     {
-        check_connection();
-        if (!is_connected)
-        {
-            reconnect();
-        }
         std::string response;
-        std::array<char, 16 * 8192> buffer;
+        std::array<char, 4096> buffer;
         ssize_t bytes_received;
-        do
+        while (true)
         {
             bytes_received = recv(sock_fd, buffer.data(), buffer.size(), 0);
+
             assert(bytes_received != -1);
-            response.append(buffer.data(), bytes_received);
-        } while (bytes_received == static_cast<ssize_t>(buffer.size()));
-        return Response(response);
-    }
-
-    void Client::check_connection()
-    {
-        std::array<struct pollfd, 1> pfds;
-        pfds[0].fd = sock_fd;
-        pfds[0].events = POLLIN | POLLRDHUP;
-
-        int ret = poll(pfds.data(), pfds.size(), 100);
-        assert(ret != -1);
-        if ((ret > 0) && (pfds[0].revents & POLLRDHUP))
-        {
-            is_connected = false;
+            if (bytes_received == 0)
+            {
+                break;
+            }
+            else
+            {
+                response.append(buffer.data(), bytes_received);
+            }
         }
+
+        return Response(response);
     }
 
 } // namespace ClientLib

@@ -165,13 +165,8 @@ namespace ClientLib
             int arr_flag = 0;
             if (body != "\n")
             {
-                if (body[1] == '{')
+                if (body[1] == '[')
                 {
-                    body += '}';
-                }
-                else if (body[1] == '[')
-                {
-                    body += ']';
                     arr_flag = 1;
                 }
                 if (arr_flag == 0)
@@ -204,10 +199,6 @@ namespace ClientLib
         else if (response.get_status_code() >= 400 && response.get_status_code() < 500)
         {
             std::string body = response.get_body();
-            if ((body[1] == '{') && (body[body.size() - 1] != '}'))
-            {
-                body += '}';
-            }
             json response_body = json::parse(body);
             std::cout << response_body["error"] << std::endl;
         }
