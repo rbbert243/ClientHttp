@@ -13,9 +13,11 @@ namespace ClientLib
         std::string method;
         std::string path;
         json payload;
+        std::string cookie;
 
     public:
         Request(const std::string &method, const std::string &path, const json &payload);
+        Request(const std::string &method, const std::string &path, const std::string &cookie);
         ~Request();
         std::string to_string() const;
     };

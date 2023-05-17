@@ -11,6 +11,7 @@ namespace ClientLib
     private:
         std::unique_ptr<Client> client;
         std::string cookie = "";
+        std::string jwt = "";
 
     public:
         friend class Client;

@@ -1,5 +1,6 @@
 #include <Response.hpp>
 #include <sstream>
+#include <vector>
 
 namespace ClientLib
 {

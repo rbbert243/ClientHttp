@@ -62,7 +62,7 @@ namespace ClientLib
             reconnect();
         }
         std::string response;
-        std::array<char, 4096> buffer;
+        std::array<char, 8192> buffer;
         ssize_t bytes_received;
         do
         {

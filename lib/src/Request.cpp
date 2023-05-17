@@ -1,4 +1,5 @@
 #include <Request.hpp>
+#include <iostream>
 
 #define CRLF "\r\n"
 #define HOST "Host: 34.254.242.81:8080" CRLF
@@ -7,6 +8,8 @@ namespace ClientLib
 {
 
     Request::Request(const std::string &method, const std::string &path, const json &payload) : method(method), path(path), payload(payload) {}
+
+    Request::Request(const std::string &method, const std::string &path, const std::string &cookie) : method(method), path(path), cookie(cookie) {}
 
     Request::~Request() = default;
 
@@ -23,6 +26,7 @@ namespace ClientLib
         }
         else
         {
+            request += "Cookie: " + cookie + CRLF;
             request += CRLF;
         }
 

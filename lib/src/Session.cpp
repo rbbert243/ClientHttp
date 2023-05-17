@@ -47,11 +47,6 @@ namespace ClientLib
         }
         else if (command == "login")
         {
-            if (cookie != "")
-            {
-                std::cout << "Already logged in" << std::endl;
-                return;
-            }
             std::string username;
             std::string password;
             std::cout << "username=";
@@ -77,13 +72,25 @@ namespace ClientLib
             auto request = Request("POST", "/api/v1/tema/auth/login", payload);
             send_request(request.to_string());
         }
+        else if (command == "enter_library")
+        {
+            auto request = Request("GET", "/api/v1/tema/library/access", cookie);
+            send_request(request.to_string());
+        }
+        else if (command == "logout")
+        {
+            auto request = Request("GET", "/api/v1/tema/auth/logout", cookie);
+            cookie = "";
+            jwt = "";
+            send_request(request.to_string());
+        }
         else
         {
             if (command != "help")
             {
                 std::cout << "Unknown command: " << command << std::endl;
             }
-            std::cout << "Available commands: register, login" << std::endl;
+            std::cout << "Available commands: register, login, enter_library" << std::endl;
             std::cout << "Type exit to exit" << std::endl;
         }
     }
@@ -99,6 +106,15 @@ namespace ClientLib
             if (headers.find("\nSet-Cookie") != headers.end())
             {
                 cookie = headers["\nSet-Cookie"];
+                size_t pos = cookie.find(';');
+                cookie = cookie.substr(0, pos);
+            }
+            std::string body = response.get_body();
+            if (body != "\n")
+            {
+                body += '}';
+                json jwt_json = json::parse(body);
+                jwt = jwt_json["token"];
             }
         }
         else if (response.get_status_code() >= 400 && response.get_status_code() < 500)
@@ -112,7 +128,7 @@ namespace ClientLib
         }
         else
         {
-            std::cout << "Server closed connection" << std::endl;
+            std::cout << "Unknown error" << std::endl;
         }
     }
 
