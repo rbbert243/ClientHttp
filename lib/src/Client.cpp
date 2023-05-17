@@ -21,14 +21,12 @@ namespace ClientLib
         assert(inet_pton(AF_INET, ip.c_str(), &server_addr.sin_addr) != -1);
     }
 
-    Client::~Client()
-    {
-        terminate();
-    }
+    Client::~Client() = default;
 
     void Client::establish_connection()
     {
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
+        is_connected = true;
     }
 
     void Client::reconnect()
@@ -37,10 +35,15 @@ namespace ClientLib
         sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         assert(sock_fd != -1);
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
+        is_connected = true;
     }
 
-    void Client::send_request(const std::string &request) const
+    void Client::send_request(const std::string &request)
     {
+        if (!is_connected)
+        {
+            reconnect();
+        }
         size_t bytes_sent = 0;
         while (bytes_sent < request.length())
         {
@@ -50,8 +53,12 @@ namespace ClientLib
         }
     }
 
-    Response Client::receive_response() const
+    Response Client::receive_response()
     {
+        if (!is_connected)
+        {
+            reconnect();
+        }
         std::string response;
         std::array<char, 4096> buffer;
         ssize_t bytes_received;
@@ -62,45 +69,6 @@ namespace ClientLib
             response.append(buffer.data(), bytes_received);
         } while (bytes_received == static_cast<ssize_t>(buffer.size()));
         return Response(response);
-    }
-
-    void Client::start_keep_alive()
-    {
-        keep_alive_thread = std::thread(&Client::keep_alive, this);
-    }
-
-    void Client::keep_alive()
-    {
-        while (true)
-        {
-            std::unique_lock<std::mutex> lock(keep_alive_mutex);
-            if (keep_alive_cv.wait_for(lock, std::chrono::seconds(1), [this]()
-                                       { return stop_keep_alive; }))
-            {
-                break;
-            }
-
-            struct pollfd poll_fd;
-            poll_fd.fd = sock_fd;
-            poll_fd.events = POLLHUP | POLLERR;
-
-            int ret = poll(&poll_fd, 1, 0);
-            assert(ret != -1);
-            if (ret > 0 && (poll_fd.revents & (POLLHUP | POLLERR)))
-            {
-                std::cout << "Connection lost" << std::endl;
-                reconnect();
-            }
-        }
-    }
-
-    void Client::terminate()
-    {
-        stop_keep_alive = true;
-        if (keep_alive_thread.joinable())
-        {
-            keep_alive_thread.join();
-        }
     }
 
 } // namespace ClientLib

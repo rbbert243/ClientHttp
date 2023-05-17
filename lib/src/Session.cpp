@@ -12,7 +12,6 @@ namespace ClientLib
     Session::Session(std::unique_ptr<Client> client) : client(std::move(client))
     {
         this->client->establish_connection();
-        this->client.get()->start_keep_alive();
     }
 
     Session::~Session() = default;
@@ -77,6 +76,15 @@ namespace ClientLib
 
             auto request = Request("POST", "/api/v1/tema/auth/login", payload);
             send_request(request.to_string());
+        }
+        else
+        {
+            if (command != "help")
+            {
+                std::cout << "Unknown command: " << command << std::endl;
+            }
+            std::cout << "Available commands: register, login" << std::endl;
+            std::cout << "Type exit to exit" << std::endl;
         }
     }
 

@@ -20,6 +20,7 @@ int main()
         getline(std::cin, command);
         if (command == "exit")
         {
+            std::cout << "Exiting..." << std::endl;
             break;
         }
         else
