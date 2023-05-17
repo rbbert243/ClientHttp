@@ -193,6 +193,11 @@ namespace ClientLib
                 else if (arr_flag == 1)
                 {
                     json books_json = json::parse(body);
+                    for (auto book : books_json)
+                    {
+                        std::cout << "Id " << book["id"] << std::endl;
+                        std::cout << "Title: " << book["title"] << std::endl;
+                    }
                 }
             }
         }
