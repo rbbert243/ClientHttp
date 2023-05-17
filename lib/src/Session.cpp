@@ -77,6 +77,57 @@ namespace ClientLib
             auto request = Request("GET", "/api/v1/tema/library/access", cookie);
             send_request(request.to_string());
         }
+        else if (command == "get_books")
+        {
+            auto request = Request("GET", "/api/v1/tema/library/books", cookie, jwt);
+            send_request(request.to_string());
+        }
+        else if (command == "get_book")
+        {
+            std::string id;
+            std::cout << "id=";
+            getline(std::cin, id);
+            auto request = Request("GET", "/api/v1/tema/library/books", cookie, jwt, id);
+            send_request(request.to_string());
+        }
+        else if (command == "add_book")
+        {
+            std::string title;
+            std::string author;
+            std::string genre;
+            std::string publisher;
+            std::string page_count;
+
+            std::cout << "title=";
+            getline(std::cin, title);
+            std::cout << "author=";
+            getline(std::cin, author);
+            std::cout << "genre=";
+            getline(std::cin, genre);
+            std::cout << "publisher=";
+            getline(std::cin, publisher);
+            std::cout << "page_count=";
+            getline(std::cin, page_count);
+
+            json payload = {
+                {"title", title},
+                {"author", author},
+                {"genre", genre},
+                {"publisher", publisher},
+                {"page_count", page_count},
+            };
+
+            auto request = Request("POST", "/api/v1/tema/library/books", payload, cookie, jwt);
+            send_request(request.to_string());
+        }
+        else if (command == "delete_book")
+        {
+            std::string id;
+            std::cout << "id=";
+            getline(std::cin, id);
+            auto request = Request("DELETE", "/api/v1/tema/library/books", cookie, jwt, id);
+            send_request(request.to_string());
+        }
         else if (command == "logout")
         {
             auto request = Request("GET", "/api/v1/tema/auth/logout", cookie);
@@ -97,11 +148,12 @@ namespace ClientLib
 
     void Session::send_request(const std::string &request)
     {
+        client.get()->reconnect();
         client.get()->send_request(request);
         auto response = client.get()->receive_response();
         if (response.get_status_code() >= 200 && response.get_status_code() < 300)
         {
-            std::cout << "Success" << std::endl;
+            std::cout << response.get_status_code() << " " << response.get_status_message() << std::endl;
             auto headers = response.get_headers();
             if (headers.find("\nSet-Cookie") != headers.end())
             {
@@ -110,16 +162,48 @@ namespace ClientLib
                 cookie = cookie.substr(0, pos);
             }
             std::string body = response.get_body();
+            int arr_flag = 0;
             if (body != "\n")
             {
-                body += '}';
-                json jwt_json = json::parse(body);
-                jwt = jwt_json["token"];
+                if (body[1] == '{')
+                {
+                    body += '}';
+                }
+                else if (body[1] == '[')
+                {
+                    body += ']';
+                    arr_flag = 1;
+                }
+                if (arr_flag == 0)
+                {
+                    json response_body = json::parse(body);
+                    if (response_body.find("token") != response_body.end())
+                    {
+                        jwt = response_body["token"];
+                    }
+                    else
+                    {
+                        std::cout << "Title: " << response_body["title"] << std::endl;
+                        std::cout << "Author: " << response_body["author"] << std::endl;
+                        std::cout << "Publisher: " << response_body["publisher"] << std::endl;
+                        std::cout << "Genre: " << response_body["genre"] << std::endl;
+                        std::cout << "Page count: " << response_body["page_count"] << std::endl;
+                    }
+                }
+                else if (arr_flag == 1)
+                {
+                    json books_json = json::parse(body);
+                }
             }
         }
         else if (response.get_status_code() >= 400 && response.get_status_code() < 500)
         {
-            json response_body = json::parse(response.get_body());
+            std::string body = response.get_body();
+            if ((body[1] == '{') && (body[body.size() - 1] != '}'))
+            {
+                body += '}';
+            }
+            json response_body = json::parse(body);
             std::cout << response_body["error"] << std::endl;
         }
         else if (response.get_status_code() >= 500 && response.get_status_code() < 600)

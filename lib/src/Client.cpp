@@ -62,7 +62,7 @@ namespace ClientLib
             reconnect();
         }
         std::string response;
-        std::array<char, 8192> buffer;
+        std::array<char, 16 * 8192> buffer;
         ssize_t bytes_received;
         do
         {
@@ -79,7 +79,7 @@ namespace ClientLib
         pfds[0].fd = sock_fd;
         pfds[0].events = POLLIN | POLLRDHUP;
 
-        int ret = poll(pfds.data(), pfds.size(), 1000);
+        int ret = poll(pfds.data(), pfds.size(), 100);
         assert(ret != -1);
         if ((ret > 0) && (pfds[0].revents & POLLRDHUP))
         {
