@@ -112,8 +112,7 @@ namespace ClientLib
         }
         else
         {
-            client.get()->reconnect();
-            send_request(request);
+            std::cout << "Server closed connection" << std::endl;
         }
     }
 

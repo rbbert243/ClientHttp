@@ -40,6 +40,7 @@ namespace ClientLib
 
     void Client::send_request(const std::string &request)
     {
+        check_connection();
         if (!is_connected)
         {
             reconnect();
@@ -55,6 +56,7 @@ namespace ClientLib
 
     Response Client::receive_response()
     {
+        check_connection();
         if (!is_connected)
         {
             reconnect();
@@ -69,6 +71,20 @@ namespace ClientLib
             response.append(buffer.data(), bytes_received);
         } while (bytes_received == static_cast<ssize_t>(buffer.size()));
         return Response(response);
+    }
+
+    void Client::check_connection()
+    {
+        std::array<struct pollfd, 1> pfds;
+        pfds[0].fd = sock_fd;
+        pfds[0].events = POLLIN | POLLRDHUP;
+
+        int ret = poll(pfds.data(), pfds.size(), 1000);
+        assert(ret != -1);
+        if ((ret > 0) && (pfds[0].revents & POLLRDHUP))
+        {
+            is_connected = false;
+        }
     }
 
 } // namespace ClientLib
