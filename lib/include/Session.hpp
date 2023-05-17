@@ -10,13 +10,14 @@ namespace ClientLib
     {
     private:
         std::unique_ptr<Client> client;
+        std::string cookie = "";
 
     public:
         friend class Client;
         explicit Session(std::unique_ptr<Client> client);
         ~Session();
-        void parse_command(const std::string &command) const;
-        void send_request(const std::string &request) const;
+        void parse_command(const std::string &command);
+        void send_request(const std::string &request);
 
         static std::unique_ptr<Session> create(std::unique_ptr<Client> client)
         {

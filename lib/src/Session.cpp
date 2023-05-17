@@ -17,7 +17,7 @@ namespace ClientLib
 
     Session::~Session() = default;
 
-    void Session::parse_command(const std::string &command) const
+    void Session::parse_command(const std::string &command)
     {
         if (command == "register")
         {
@@ -48,6 +48,11 @@ namespace ClientLib
         }
         else if (command == "login")
         {
+            if (cookie != "")
+            {
+                std::cout << "Already logged in" << std::endl;
+                return;
+            }
             std::string username;
             std::string password;
             std::cout << "username=";
@@ -75,13 +80,18 @@ namespace ClientLib
         }
     }
 
-    void Session::send_request(const std::string &request) const
+    void Session::send_request(const std::string &request)
     {
         client.get()->send_request(request);
         auto response = client.get()->receive_response();
         if (response.get_status_code() >= 200 && response.get_status_code() < 300)
         {
             std::cout << "Success" << std::endl;
+            auto headers = response.get_headers();
+            if (headers.find("\nSet-Cookie") != headers.end())
+            {
+                cookie = headers["\nSet-Cookie"];
+            }
         }
         else if (response.get_status_code() >= 400 && response.get_status_code() < 500)
         {
