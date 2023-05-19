@@ -4,9 +4,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <cassert>
-#include <iostream>
 #include <array>
-#include <poll.h>
 
 namespace ClientLib
 {
@@ -36,7 +34,7 @@ namespace ClientLib
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
     }
 
-    void Client::send_request(const std::string &request)
+    void Client::send_request(const std::string &request) const
     {
         size_t bytes_sent = 0;
         while (bytes_sent < request.length())
@@ -47,7 +45,7 @@ namespace ClientLib
         }
     }
 
-    Response Client::receive_response()
+    Response Client::receive_response() const
     {
         std::string response;
         std::array<char, 4096> buffer;
