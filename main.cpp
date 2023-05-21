@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 
-#define SERVER_IP "34.254.242.81"
 #define SERVER_PORT 8080
 
 #define forever for (;;)
