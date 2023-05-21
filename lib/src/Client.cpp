@@ -50,18 +50,27 @@ namespace ClientLib
         std::string response;
         std::array<char, 4096> buffer;
         ssize_t bytes_received;
+        int content_length = -1;
+
         while (true)
         {
             bytes_received = recv(sock_fd, buffer.data(), buffer.size(), 0);
-
             assert(bytes_received != -1);
-            if (bytes_received == 0)
+
+            response.append(buffer.data(), bytes_received);
+
+            if (content_length == -1)
+            {
+                size_t pos = response.find("\r\n\r\n");
+                if (pos != std::string::npos)
+                {
+                    content_length = std::stoi(response.substr(response.find("Content-Length: ") + 16, response.find("\r\n") - response.find("Content-Length: ") - 16));
+                }
+            }
+
+            if (content_length != -1 && response.length() - response.find("\r\n\r\n") - 4 == content_length)
             {
                 break;
-            }
-            else
-            {
-                response.append(buffer.data(), bytes_received);
             }
         }
 
