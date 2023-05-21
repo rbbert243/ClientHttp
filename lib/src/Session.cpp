@@ -190,7 +190,7 @@ namespace ClientLib
                     json books_json = json::parse(body);
                     for (auto book : books_json)
                     {
-                        std::cout << "Id " << book["id"] << std::endl;
+                        std::cout << "Id: " << book["id"] << std::endl;
                         std::cout << "Title: " << book["title"] << std::endl;
                     }
                 }
