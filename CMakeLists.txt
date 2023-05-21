@@ -15,3 +15,5 @@ add_library(ClientLib STATIC
 add_executable(Client main.cpp)
 
 target_link_libraries(Client ClientLib)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")

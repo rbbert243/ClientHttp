@@ -14,9 +14,9 @@ namespace ClientLib
         struct sockaddr_in server_addr;
 
     public:
-        Client(const std::string &ip, uint16_t port);
+        explicit Client(uint16_t port);
         ~Client();
-        void establish_connection();
+        void establish_connection() const;
         void reconnect();
         void send_request(const std::string &request) const;
         Response receive_response() const;

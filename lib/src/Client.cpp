@@ -8,7 +8,8 @@
 
 namespace ClientLib
 {
-    Client::Client(const std::string &ip, uint16_t port)
+    const std::string ip = "34.254.242.81";
+    Client::Client(uint16_t port)
     {
         sock_fd = socket(AF_INET, SOCK_STREAM, 0);
         assert(sock_fd != -1);
@@ -21,7 +22,7 @@ namespace ClientLib
 
     Client::~Client() = default;
 
-    void Client::establish_connection()
+    void Client::establish_connection() const
     {
         assert(connect(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) != -1);
     }
@@ -68,7 +69,7 @@ namespace ClientLib
                 }
             }
 
-            if (content_length != -1 && response.length() - response.find("\r\n\r\n") - 4 == content_length)
+            if (content_length != -1 && (int)(response.length() - response.find("\r\n\r\n") - 4) == content_length)
             {
                 break;
             }

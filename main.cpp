@@ -12,7 +12,7 @@
 int main()
 {
     std::string command;
-    auto client = make_unique<ClientLib::Client>(SERVER_IP, SERVER_PORT);
+    auto client = make_unique<ClientLib::Client>(SERVER_PORT);
     auto session = ClientLib::Session::create(std::move(client));
     forever
     {
