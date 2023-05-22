@@ -10,7 +10,6 @@
 
 int main()
 {
-    std::cout << "Client started" << std::endl;
     std::string command;
     auto client = make_unique<ClientLib::Client>(SERVER_PORT);
     auto session = ClientLib::Session::create(std::move(client));
