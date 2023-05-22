@@ -6,6 +6,8 @@
 #include <cassert>
 #include <array>
 
+#define forever for (;;)
+
 namespace ClientLib
 {
     const std::string ip = "34.254.242.81";
@@ -53,7 +55,7 @@ namespace ClientLib
         ssize_t bytes_received;
         int content_length = -1;
 
-        while (true)
+        forever
         {
             bytes_received = recv(sock_fd, buffer.data(), buffer.size(), 0);
             assert(bytes_received != -1);
