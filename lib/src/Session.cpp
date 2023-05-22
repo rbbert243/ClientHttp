@@ -178,11 +178,23 @@ namespace ClientLib
                     }
                     else
                     {
-                        std::cout << "Title: " << response_body["title"] << std::endl;
-                        std::cout << "Author: " << response_body["author"] << std::endl;
-                        std::cout << "Publisher: " << response_body["publisher"] << std::endl;
-                        std::cout << "Genre: " << response_body["genre"] << std::endl;
-                        std::cout << "Page count: " << response_body["page_count"] << std::endl;
+                        std::string title = response_body["title"];
+                        title = title.substr(0, title.length());
+                        std::cout << "title: " << title << std::endl;
+
+                        std::string author = response_body["author"];
+                        author = author.substr(0, author.length());
+                        std::cout << "author: " << author << std::endl;
+
+                        std::string publisher = response_body["publisher"];
+                        publisher = publisher.substr(0, publisher.length());
+                        std::cout << "publisher: " << publisher << std::endl;
+
+                        std::string genre = response_body["genre"];
+                        genre = genre.substr(0, genre.length());
+                        std::cout << "genre: " << genre << std::endl;
+
+                        std::cout << "page_count: " << response_body["page_count"] << std::endl;
                     }
                 }
                 else if (arr_flag == 1)
@@ -190,8 +202,8 @@ namespace ClientLib
                     json books_json = json::parse(body);
                     for (auto book : books_json)
                     {
-                        std::cout << "Id: " << book["id"] << std::endl;
-                        std::cout << "Title: " << book["title"] << std::endl;
+                        std::cout << "id: " << book["id"] << std::endl;
+                        std::cout << "title: " << book["title"] << std::endl;
                     }
                 }
             }
