@@ -141,8 +141,18 @@ namespace ClientLib
             {
                 std::cout << "Unknown command: " << command << std::endl;
             }
-            std::cout << "Available commands: register, login, enter_library" << std::endl;
-            std::cout << "Type exit to exit" << std::endl;
+            std::cout << "Available commands:" << std::endl;
+            std::cout << "register" << std::endl;
+            std::cout << "login" << std::endl;
+            std::cout << "enter_library" << std::endl;
+            std::cout << "get_books" << std::endl;
+            std::cout << "get_book" << std::endl;
+            std::cout << "add_book" << std::endl;
+            std::cout << "delete_book" << std::endl;
+            std::cout << "logout" << std::endl;
+
+            std::cout << "help" << std::endl;
+            std::cout << "exit" << std::endl;
         }
     }
 
