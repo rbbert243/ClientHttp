@@ -1,19 +1,19 @@
 # Tema4PCom
 
-This is a project for the "Programming Concepts" course at the Politehnica University of Bucharest. The project consists of a client-server application that allows users to perform various operations on a database.
+This assignment is for the Politehnica University of Bucharest's "Protocoale de Comunicatie" course. Users can execute different operations on a database using the project's client-server application.
 
 ## Client
 
-This project is built using CMake. To build the project, make sure you have CMake version 3.10 or higher installed on your system. Then, follow these steps:
+CMake is used to build this project. Make sure you have CMake version 3.10 or higher installed on your system in order to create the project. then take these actions:
 
-1. Clone the repository to your local machine.
-2. Navigate to the project directory.
-3. Create a build directory: `mkdir build`.
-4. Navigate to the build directory: `cd build`.
-5. Generate the build files: `cmake ..`.
-6. Build the project: `make`.
+1. Copy the repository to your personal computer.
+Go to the project directory by navigating.
+3. Use'mkdir build' to create a build directory.
+4. Use 'cd build' to get to the build directory.
+5. Run 'cmake..' to create the build files.
+6. Use the'make' command to build the project.
 
-The resulting executable will be located in the `build` directory.
+The 'build' directory will house the finished executable.
 
 ### Usage
 
@@ -44,26 +44,24 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## `main.cpp`
 
-`main.cpp` is a C++ file that contains the main function of the client application. This function is responsible for creating the objects needed to establish a connection to the server, and for processing user input.
+The primary function of the client application is contained in the C++ file named `main.cpp`. The objects required to connect to the server must be created by this function, and user input must also be processed.
 
 ## `Client.cpp`
 
-`Client.cpp` is a source file that contains the implementation of the `Client` class. The `Client` class is responsible for establishing a connection to the server, sending requests to the server, and receiving responses from the server.
+The Client class implementation is found in the source file `Client.cpp`. Establishing a connection with the server, submitting requests to the server, and getting results from the server are all tasks that belong to the Client class.
 
-The `Client` class has a constructor that takes a port number as an argument, and initializes the `sock_fd` member variable with a new socket file descriptor. It also initializes the `server_addr` member variable with the IP address and port number of the server.
+A new socket file descriptor is initialized in the`sock_fd` member variable of the `Client` class constructor, which takes a port number as an input. Additionally, it initializes the`server_addr` member variable with the servers IP address and port.
 
-The `Client` class has a destructor that does nothing.
-
-The `Client` class has several member functions, including `establish_connection`, `reconnect`, `send_request`, and `receive_response`. The `establish_connection` function connects to the server using the `connect` system call. The `reconnect` function closes the current connection and establishes a new connection to the server. The `send_request` function sends a request to the server using the `send` system call. The `receive_response` function receives a response from the server using the `recv` system call.
+The `establish_connection`,`reconnect`,`send_request`, and `receive_response` member functions are only a few of the functions that make up the Client class. The `connect` system call is used by the `establish_connection` function to establish a connection to the server. Reconnecting with the server cuts off the existing connection and creates a new one. Using the `send` system call, the `send_request` function transmits a request to the server. The `recv` system call is used by thereceive_response function to obtain a response from the server.
 
 ## `Request.cpp`
 
-`Request.cpp` is a C++ file that contains the implementation of the `Request` class. This class is responsible for creating HTTP requests with various parameters such as method, path, payload, cookie, and JWT. The `to_string()` method of this class is used to convert the request object to a string representation that can be sent over the network.
+The `Request` class implementation is found in the C++ file `Request`.cpp. The creation of HTTP requests with multiple parameters, including method, path, payload, cookie, and JWT, falls under the purview of this class. The request object is transformed into a string representation that can be delivered over the network using the classs `to_string()` method.
 
 ## `Response.cpp`
 
-`Response.cpp` is a C++ file that contains the implementation of the `Response` class. This class is responsible for parsing HTTP responses received from a server. The constructor of this class takes a string representation of the response and parses it into its various components such as HTTP version, status code, status message, headers, and body. The class provides getter methods to access these components. The `headers` member is stored as an unordered map of key-value pairs.
+The `Response` class implementation is located in the C++ file `Response.cpp`. This class is in charge of analyzing HTTP responses that come in from a server. This class constructor breaks down a response represented as a string into its individual parts, including the HTTP version, status code, status message, headers, and body. To access these elements, the class has getter methods. An unordered map of key-value pairs serves as the storage format for the `headers` member.
 
 ## `Session.cpp`
 
-`Session.cpp` is a C++ file that contains the implementation of the `Session` class. This class is responsible for managing the user's session with the server. The constructor of this class takes a `Client` object as an argument and initializes the `client` member variable with it. The `Session` class has a destructor that does nothing.
+The `Session` class implementation is found in the C++ file "`Session.cpp`". The management of the users server session falls under the purview of this class. The `client` member variable is initialized with a Client object passed as an input to the class constructor. Session class has a destructor that performs nothing.
