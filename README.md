@@ -1,4 +1,4 @@
-# Tema4PCom
+# Client Http
 
 This assignment is for the Politehnica University of Bucharest's "Protocoale de Comunicatie" course. Users can execute different operations on a database using the project's client-server application.
 
